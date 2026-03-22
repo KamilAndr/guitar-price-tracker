@@ -1,5 +1,5 @@
-from guitar_offers_tracker.models.listing import Listing, Source
 import requests
+from guitar_offers_tracker.models.listing import Listing, Source
 
 
 def _fetch_raw_listings(query: str, token: str, per_page: int = 50) -> dict:
