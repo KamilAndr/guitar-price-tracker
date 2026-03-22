@@ -29,6 +29,7 @@ class Listing(BaseModel):
     year: str | None
     condition: GuitarCondition
     price: float
+    shipping_cost: float | None
     currency: str
     tax_included: bool | None
     created_at: datetime | None
