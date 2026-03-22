@@ -1,5 +1,9 @@
 import requests
+import structlog
 from guitar_offers_tracker.models.listing import Listing, Source
+
+
+logger = structlog.get_logger(__name__)
 
 
 def _fetch_raw_listings(query: str, token: str, per_page: int = 50) -> dict:
@@ -18,7 +22,15 @@ def _fetch_raw_listings(query: str, token: str, per_page: int = 50) -> dict:
         },
     )
     response.raise_for_status()
-    return response.json()
+    data = response.json()
+    logger.info(
+        "reverb_fetch_complete",
+        query=query,
+        total=data.get("total"),
+        page=data.get("current_page"),
+        per_page=per_page,
+    )
+    return data
 
 
 def _extract_shipping_cost(rates: list[dict]) -> float | None:
@@ -53,4 +65,13 @@ def _parse_raw_listing(raw: dict) -> Listing:
 
 def get_listings(query: str, token: str, per_page: int = 50) -> list[Listing]:
     raw_listings: list[dict] = _fetch_raw_listings(query, token, per_page)["listings"]
-    return [_parse_raw_listing(listing) for listing in raw_listings]
+    parsed_listings: list[Listing] = [
+        _parse_raw_listing(listing) for listing in raw_listings
+    ]
+    logger.info(
+        "reverb_parse_complete",
+        query=query,
+        fetched=len(raw_listings),
+        parsed=len(parsed_listings),
+    )
+    return parsed_listings
