@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 
 class GuitarCondition(str, Enum):
@@ -33,3 +33,10 @@ class Listing(BaseModel):
     currency: str
     tax_included: bool | None
     created_at: datetime | None
+
+    @field_validator("year", mode="before")
+    @classmethod
+    def empty_string_to_none(cls, v: str | None) -> str | None:
+        if v == "":
+            return None
+        return v
