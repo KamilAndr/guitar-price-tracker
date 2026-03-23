@@ -1,6 +1,6 @@
 import requests
 import structlog
-from guitar_offers_tracker.models.listing import Listing, Source
+from guitar_price_tracker.models.listing import Listing, Source
 
 
 logger = structlog.get_logger(__name__)
