@@ -2,7 +2,7 @@ import pytest
 import json
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
-from guitar_offers_tracker.ingestion.reverb import _parse_raw_listing
+from guitar_price_tracker.ingestion.reverb import _parse_raw_listing
 
 
 @pytest.fixture
