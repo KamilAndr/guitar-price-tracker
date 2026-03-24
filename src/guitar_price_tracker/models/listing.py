@@ -6,6 +6,7 @@ from pydantic import BaseModel, field_validator
 class GuitarCondition(str, Enum):
     BRAND_NEW = "brand-new"
     MINT = "mint"
+    B_STOCK = "b-stock"
     EXCELLENT = "excellent"
     VERY_GOOD = "very-good"
     GOOD = "good"
@@ -37,6 +38,4 @@ class Listing(BaseModel):
     @field_validator("year", mode="before")
     @classmethod
     def empty_string_to_none(cls, v: str | None) -> str | None:
-        if v == "":
-            return None
-        return v
+        return None if v == "" else v
