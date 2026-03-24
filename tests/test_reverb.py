@@ -2,7 +2,8 @@ import pytest
 import json
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
-from guitar_price_tracker.ingestion.reverb import _parse_raw_listing
+from unittest.mock import patch
+from guitar_price_tracker.ingestion.reverb import _parse_raw_listing, get_listings
 
 
 @pytest.fixture
@@ -56,3 +57,10 @@ def test_empty_year_becomes_none(raw_listing):
     raw_listing["year"] = ""
     listing = _parse_raw_listing(raw_listing)
     assert listing.year is None
+
+
+@patch("guitar_price_tracker.ingestion.reverb._fetch_raw_listings")
+def test_get_listings_empty_response(mock_fetch):
+    mock_fetch.return_value = {"listings": [], "_links": {}}
+    result = get_listings("query", "token")
+    assert result == []
