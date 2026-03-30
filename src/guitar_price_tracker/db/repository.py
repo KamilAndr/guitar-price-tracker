@@ -2,7 +2,7 @@ import psycopg2
 from guitar_price_tracker.models.listing import Listing
 
 
-class ListingRepository:
+class Repository:
     _LISTING_UPSERT_QUERY = """
         INSERT INTO listings (source_id, source, link, make, title, year, condition, listed_at)
         VALUES (%(source_id)s, %(source)s, %(link)s, %(make)s, %(title)s, %(year)s, %(condition)s, %(listed_at)s)
@@ -26,6 +26,14 @@ class ListingRepository:
             currency = EXCLUDED.currency,
             tax_included = EXCLUDED.tax_included;
         """
+    
+    _MODEL_UPSERT = """
+        INSERT INTO models (model_name)
+        VALUES (%(model_name)s)
+        ON CONFLICT (model_name) DO UPDATE SET
+            model_name = model_name
+        RETURNING id, model_name;
+    """
 
     def __init__(self, database_url):
         self.database_url = database_url
@@ -43,6 +51,20 @@ class ListingRepository:
         data = listing.model_dump()
         data["listing_id"] = listing_id
         cursor.execute(self._PRICE_OBS_INSERT_QUERY, data)
+
+    def _upsert_model(self, cursor, model: str) -> tuple[int, str]:
+        cursor.execute(self._MODEL_UPSERT, model)
+        return cursor.fetchone()
+
+    def save_models(self, models: list[str]) -> list[tuple[int, str]]:
+        try:
+            with self.conn.cursor() as cursor:
+                inserted_models = [self._upsert_model(cursor, model) for model in models]
+            self.conn.commit()
+        except Exception:
+            self.conn.rollback()
+            raise
+        return inserted_models
 
     def save_listings(self, listings: list[Listing]) -> None:
         try:
