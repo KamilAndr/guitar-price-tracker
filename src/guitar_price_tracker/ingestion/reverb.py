@@ -62,6 +62,7 @@ def _parse_raw_listing(raw: dict) -> Listing:
             "source": Source.REVERB,
             "link": raw["_links"]["web"]["href"],
             "make": raw["make"],
+            "source_model": raw["model"],
             "title": raw["title"],
             "year": raw["year"],
             "condition": _normalize_condition(raw["condition"]["slug"]),

@@ -26,6 +26,7 @@ class Listing(BaseModel):
     source: Source
     link: str
     make: str
+    source_model: str
     title: str
     year: str | None
     condition: GuitarCondition
