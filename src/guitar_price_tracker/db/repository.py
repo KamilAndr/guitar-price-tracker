@@ -27,12 +27,21 @@ class Repository:
             tax_included = EXCLUDED.tax_included;
         """
 
-    _MODEL_UPSERT = """
+    _MODEL_UPSERT_QUERY = """
         INSERT INTO models (model_name)
         VALUES (%(model_name)s)
         ON CONFLICT (model_name) DO UPDATE SET
             model_name = model_name
         RETURNING id, model_name;
+    """
+
+    _GET_UNMATCHED_LISTINGS_QUERY = """
+        SELECT
+          id,
+          title,
+          source_model
+        FROM listings
+        WHERE reference_model_id IS NULL
     """
 
     def __init__(self, database_url):
@@ -53,7 +62,7 @@ class Repository:
         cursor.execute(self._PRICE_OBS_INSERT_QUERY, data)
 
     def _upsert_model(self, cursor, model: str) -> tuple[int, str]:
-        cursor.execute(self._MODEL_UPSERT, model)
+        cursor.execute(self._MODEL_UPSERT_QUERY, model)
         return cursor.fetchone()
 
     def save_models(self, models: list[str]) -> list[tuple[int, str]]:
@@ -78,6 +87,10 @@ class Repository:
         except Exception:
             self.conn.rollback()
             raise
+
+    def get_unmatched_listings(self) -> list[tuple[int, str, str | None]]:
+        with self.conn.cursor() as cursor:
+            return cursor.execute(self._GET_UNMATCHED_LISTINGS_QUERY).fetchall()
 
     def close(self):
         self.conn.close()
