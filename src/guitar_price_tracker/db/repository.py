@@ -44,6 +44,12 @@ class Repository:
         WHERE reference_model_id IS NULL
     """
 
+    _UPDATE_UNMATCHED_LISTING_QUERY = """
+        UPDATE listings
+        SET reference_model_id = %(reference_model_id)s
+        WHERE id = %(id)s
+    """
+
     def __init__(self, database_url):
         self.database_url = database_url
         self.conn = psycopg2.connect(database_url)
@@ -90,7 +96,23 @@ class Repository:
 
     def get_unmatched_listings(self) -> list[tuple[int, str, str | None]]:
         with self.conn.cursor() as cursor:
-            return cursor.execute(self._GET_UNMATCHED_LISTINGS_QUERY).fetchall()
+            cursor.execute(self._GET_UNMATCHED_LISTINGS_QUERY)
+            return cursor.fetchall()
+
+    def update_unmatched_listings(
+        self, matched_listings: list[tuple[int, int]]
+    ) -> None:
+        try:
+            with self.conn.cursor() as cursor:
+                for listing_id, reference_model_id in matched_listings:
+                    cursor.execute(
+                        self._UPDATE_UNMATCHED_LISTING_QUERY,
+                        {"id": listing_id, "reference_model_id": reference_model_id},
+                    )
+            self.conn.commit()
+        except Exception:
+            self.conn.rollback()
+            raise
 
     def close(self):
         self.conn.close()
