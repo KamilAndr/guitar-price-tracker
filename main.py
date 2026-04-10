@@ -19,8 +19,23 @@ if __name__ == "__main__":
         listings = get_listings(model["reference_model"], token)
         repo.save_listings(listings)
 
-    inserted_models = repo.save_models([model["reference_model"] for model in guitar_models])
+    inserted_models = repo.save_models(
+        [model["reference_model"] for model in guitar_models]
+    )
+    reference_models = {
+        reference_model: model_id for model_id, reference_model in inserted_models
+    }
 
-    #TODO: add matching logic
+    unmatched_listings = repo.get_unmatched_listings()
+    matched_listings = []
+    for listing in unmatched_listings:
+        listing_id, title, source_model = listing
+        matched_model = match_guitar_model(title, source_model, guitar_models)
+        if matched_model:
+            matched_listings.append(
+                (listing_id, reference_models[matched_model["reference_model"]])
+            )
+
+    repo.update_unmatched_listings(matched_listings)
 
     repo.close()
