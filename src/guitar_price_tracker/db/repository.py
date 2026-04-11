@@ -4,8 +4,8 @@ from guitar_price_tracker.models.listing import Listing
 
 class Repository:
     _LISTING_UPSERT_QUERY = """
-        INSERT INTO listings (source_id, source, link, make, title, year, condition, listed_at)
-        VALUES (%(source_id)s, %(source)s, %(link)s, %(make)s, %(title)s, %(year)s, %(condition)s, %(listed_at)s)
+        INSERT INTO listings (source_id, source, link, make, title, year, condition, listed_at, source_model)
+        VALUES (%(source_id)s, %(source)s, %(link)s, %(make)s, %(title)s, %(year)s, %(condition)s, %(created_at)s, %(source_model)s)
         ON CONFLICT (source_id, source) DO UPDATE SET
             link = EXCLUDED.link,
             make = EXCLUDED.make,
@@ -13,7 +13,8 @@ class Repository:
             year = EXCLUDED.year,
             condition = EXCLUDED.condition,
             listed_at = EXCLUDED.listed_at,
-            updated_at = now()
+            updated_at = now(),
+            source_model = EXCLUDED.source_model
         RETURNING id;
         """
 
@@ -28,11 +29,11 @@ class Repository:
         """
 
     _MODEL_UPSERT_QUERY = """
-        INSERT INTO models (model_name)
+        INSERT INTO reference_models (reference_model)
         VALUES (%(model_name)s)
-        ON CONFLICT (model_name) DO UPDATE SET
-            model_name = model_name
-        RETURNING id, model_name;
+        ON CONFLICT (reference_model) DO UPDATE SET
+            reference_model = EXCLUDED.reference_model
+        RETURNING id, reference_model;
     """
 
     _GET_UNMATCHED_LISTINGS_QUERY = """
@@ -68,7 +69,7 @@ class Repository:
         cursor.execute(self._PRICE_OBS_INSERT_QUERY, data)
 
     def _upsert_model(self, cursor, model: str) -> tuple[int, str]:
-        cursor.execute(self._MODEL_UPSERT_QUERY, model)
+        cursor.execute(self._MODEL_UPSERT_QUERY, {"model_name": model})
         return cursor.fetchone()
 
     def save_models(self, models: list[str]) -> list[tuple[int, str]]:

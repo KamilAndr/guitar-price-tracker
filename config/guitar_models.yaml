@@ -3,12 +3,13 @@ guitar_models:
   must_include:
     - ["fender"]
     - ["american", "am"]
-    - ["professional II", "professional 2", "pro II", "pro 2"]
+    - ["professional ii", "professional 2", "pro ii", "pro 2"]
     - ["strat"]
-  must_exclude: ["squier", "jazz", "jaguar", "tele", "bass", "bag", "case", "amp", "guard", "+", "w/", "w\\", "with", "copy", "replica"]
+  must_exclude: ["squier", "jazz", "jaguar", "tele", "bass", "bag", "case", "amp", "guard", "+", "w/", "w\\", "with", "copy", "replica", "custom"]
 - reference_model: "Gibson Les Paul Standard 60s"
   must_include:
     - ["gibson"]
     - ["les paul", "lp"]
-    - ["standard 60", "standard '60"]
-  must_exclude: ["epiphone", "bag", "case", "amp", "guard", "+", "w/", "w\\", "with", "copy", "replica"]
+    - ["standard"]
+    - ["60"]
+  must_exclude: ["epiphone", "bag", "amp", "guard", "+", "copy", "replica", "custom", "faded", "plate", "bridge", "pickup", "knob", "tuner", "switch", "vos", "murphy"]

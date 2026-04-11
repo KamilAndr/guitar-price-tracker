@@ -1,24 +1,18 @@
-def _includes_all(title_or_source_model: str, reference_model: dict) -> bool:
+def _includes_all(listing_text: str, reference_model: dict) -> bool:
     return all(
-        any(keyword in title_or_source_model for keyword in must_include_any)
+        any(keyword in listing_text for keyword in must_include_any)
         for must_include_any in reference_model["must_include"]
     )
 
 
-def _match_model(source_model: str, reference_models: list[dict]) -> dict | None:
-    source_model = source_model.lower()
+def _find_match(listing_text: str, reference_models: list[dict]) -> dict | None:
+    listing_text = listing_text.lower()
     for reference_model in reference_models:
-        if _includes_all(source_model, reference_model):
-            return reference_model
-    return None
-
-
-def _match_title(title: str, reference_models: list[dict]) -> dict | None:
-    title = title.lower()
-    for reference_model in reference_models:
-        if any([keyword in title for keyword in reference_model["must_exclude"]]):
+        if any(
+            [keyword in listing_text for keyword in reference_model["must_exclude"]]
+        ):
             continue
-        if _includes_all(title, reference_model):
+        if _includes_all(listing_text, reference_model):
             return reference_model
     return None
 
@@ -28,7 +22,7 @@ def match_guitar_model(
 ) -> dict | None:
     matched = None
     if source_model:
-        matched = _match_model(source_model, reference_models)
+        matched = _find_match(source_model, reference_models)
     if matched:
         return matched
-    return _match_title(title, reference_models)
+    return _find_match(title, reference_models)
