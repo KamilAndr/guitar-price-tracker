@@ -1,3 +1,21 @@
+global_must_exclude:
+ - "amp"
+ - "guard"
+ - "copy"
+ - "replica"
+ - "plate"
+ - "bridge"
+ - "pickup"
+ - "knob"
+ - "tuner"
+ - "switch"
+ - "neck"
+ - "body"
+ - "bundle"
+ - "items"
+ - "extra"
+ - "left"
+
 guitar_models:
 - reference_model: "Fender American Professional II Stratocaster"
   must_include:
@@ -5,11 +23,11 @@ guitar_models:
     - ["american", "am"]
     - ["professional ii", "professional 2", "pro ii", "pro 2"]
     - ["strat"]
-  must_exclude: ["squier", "jazz", "jaguar", "tele", "bass", "bag", "case", "amp", "guard", "+", "w/", "w\\", "with", "copy", "replica", "custom"]
+  must_exclude: ["squier", "jazz", "jaguar", "tele", "bass", "bag", "custom", "limited", "ltd", "anniversary", "thinline"]
 - reference_model: "Gibson Les Paul Standard 60s"
   must_include:
     - ["gibson"]
     - ["les paul", "lp"]
     - ["standard"]
     - ["60"]
-  must_exclude: ["epiphone", "bag", "amp", "guard", "+", "copy", "replica", "custom", "faded", "plate", "bridge", "pickup", "knob", "tuner", "switch", "vos", "murphy"]
+  must_exclude: ["epiphone", "bag", "custom", "faded", "vos", "murphy", "reissue"]

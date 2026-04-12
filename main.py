@@ -11,11 +11,14 @@ if __name__ == "__main__":
     database_url = os.getenv("DATABASE_URL")
 
     with open("./config/guitar_models.yaml") as f:
-        guitar_models = yaml.safe_load(f)["guitar_models"]
+        guitar_models_config = yaml.safe_load(f)
+        global_must_exclude = guitar_models_config["global_must_exclude"]
+        guitar_models = guitar_models_config["guitar_models"]
 
     repo = Repository(database_url)
 
     for model in guitar_models:
+        model["must_exclude"] += global_must_exclude
         listings = get_listings(model["reference_model"], token)
         repo.save_listings(listings)
 
