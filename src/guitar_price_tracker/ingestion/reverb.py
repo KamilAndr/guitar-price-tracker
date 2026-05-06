@@ -14,7 +14,7 @@ def _fetch_raw_listings(
     query: str, token: str, page: int = 1, per_page: int = 50
 ) -> dict:
     response = requests.get(
-        "https://api.reverb.com/api/listings?category_uuid=dfd39027-d134-4353-b9e4-57dc6be791b9",
+        "https://api.reverb.com/api/listings",
         headers={
             "Authorization": f"Bearer {token}",
             "Accept": "application/hal+json",
@@ -26,6 +26,7 @@ def _fetch_raw_listings(
             "exclude_auctions": "true",
             "page": page,
             "per_page": per_page,
+            "category_uuid": "dfd39027-d134-4353-b9e4-57dc6be791b9",
         },
     )
     response.raise_for_status()

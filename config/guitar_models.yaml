@@ -9,7 +9,6 @@ global_must_exclude:
  - "knob"
  - "tuner"
  - "switch"
- - "neck"
  - "body"
  - "bundle"
  - "items"
@@ -30,4 +29,4 @@ guitar_models:
     - ["les paul", "lp"]
     - ["standard"]
     - ["60"]
-  must_exclude: ["epiphone", "bag", "custom", "faded", "vos", "murphy", "reissue"]
+  must_exclude: ["epiphone", "bag", "custom", "faded", "vos", "murphy", "reissue", "neck profile", "aged", "1960"]
